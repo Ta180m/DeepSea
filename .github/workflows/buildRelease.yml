@@ -23,7 +23,7 @@ jobs:
       id: bump_version	
       uses: christian-draeger/increment-semantic-version@1.0.1	
       with:	
-        current-version: '${{ steps.bump_version.outputs.next-version }}'	
+        current-version: '${{ env.TAG_NAME }}'	
         version-fragment: 'feature'    
 
     - name: Set up Python 3.8
