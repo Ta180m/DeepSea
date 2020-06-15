@@ -61,7 +61,7 @@ jobs:
     - uses: pCYSl5EDgo/cat@master
       id: release
       with:
-        path: output
+        path: ./output
     
     - name: Create Release
       id: create_release
