@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+  schedule:
+   - cron:  '0 0 * * *'
 
 jobs:
   build:
@@ -57,7 +59,7 @@ jobs:
       with:
           tag_name: ${{ env.TAG_NAME }}
           release_name: Release ${{ env.TAG_NAME }}
-          draft: true
+          draft: false
           prerelease: false
 
 
