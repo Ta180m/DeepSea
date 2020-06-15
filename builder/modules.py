@@ -671,10 +671,6 @@ def build(temp_directory, deepsea_version, command, auto_build):
         for module in data:
             # Running a SDSetup Build
             if command == common.Command.SDSetup:
-                # Only show prompts when it's not an auto build.
-                if not auto_build:
-                    # print(f'Downloading {module["name"]}...')
-
                 # Make sure module directory is created.
                 module_directory = temp_directory.joinpath(
                     module['sdsetup_module_name'])
