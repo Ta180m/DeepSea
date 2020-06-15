@@ -673,7 +673,7 @@ def build(temp_directory, deepsea_version, command, auto_build):
             if command == common.Command.SDSetup:
                 # Only show prompts when it's not an auto build.
                 if not auto_build:
-                    print(f'Downloading {module["name"]}...')
+                    # print(f'Downloading {module["name"]}...')
 
                 # Make sure module directory is created.
                 module_directory = temp_directory.joinpath(
@@ -697,7 +697,7 @@ def build(temp_directory, deepsea_version, command, auto_build):
             # Running a Kosmos Build
             else:
                 # Download the module.
-                print(f'Downloading {module["name"]}...')
+                # print(f'Downloading {module["name"]}...')
                 download = globals()[module['download_function_name']]
                 version = download(module, temp_directory,
                                    deepsea_version, True)
