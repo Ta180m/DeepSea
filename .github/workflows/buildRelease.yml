@@ -58,6 +58,11 @@ jobs:
         cd ./builder
         python ./builder.py deepsea-mini output="./deepsea-minimal.zip" >> ./output
     
+    - uses: pCYSl5EDgo/cat@master
+      id: release
+      with:
+        path: output
+    
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -66,7 +71,7 @@ jobs:
       with:
           tag_name: ${{ steps.bump_version.outputs.next-version }}
           release_name: Release ${{ steps.bump_version.outputs.next-version }}
-          body: ${{ cat ./output }}
+          body: ${{ steps.release.outputs.text }}
           draft: false
           prerelease: false
 
