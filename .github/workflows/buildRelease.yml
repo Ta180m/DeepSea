@@ -71,7 +71,8 @@ jobs:
       with:
           tag_name: ${{ steps.bump_version.outputs.next-version }}
           release_name: Release ${{ steps.bump_version.outputs.next-version }}
-          body: ${{ steps.release.outputs.text }}
+          body: |
+            ${{ steps.release.outputs.text }}
           draft: false
           prerelease: false
 
