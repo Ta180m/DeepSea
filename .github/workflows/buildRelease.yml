@@ -14,7 +14,11 @@ jobs:
     
     steps:
     - uses: actions/checkout@v2
-        
+      
+    - name: Increment version
+      run: |
+        echo ::set-env name=TAG_NAME::$(cat ./VERSION)
+    
     - name: Set up Python 3.8
       uses: actions/setup-python@v1
       with:
@@ -94,7 +98,3 @@ jobs:
           asset_path: ./builder/deepsea-minimal.zip
           asset_name: deepsea-minimal_v${{ env.TAG_NAME }}.zip
           asset_content_type: application/zip   
-          
-    - name: Increment version
-      run: |
-        echo ::set-env name=TAG_NAME::$(cat ./VERSION)
