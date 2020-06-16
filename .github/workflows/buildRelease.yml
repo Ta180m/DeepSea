@@ -46,7 +46,7 @@ jobs:
     - name: Compile DeepSea Zip
       run: |
         cd ./builder
-        python ./builder.py deepsea output="./deepsea.zip" >> output
+        python ./builder.py deepsea output="./deepsea.zip" > output
 
     - name: Compile DeepSea-patches Zip
       run: |
