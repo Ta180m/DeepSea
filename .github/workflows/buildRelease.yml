@@ -46,17 +46,17 @@ jobs:
     - name: Compile DeepSea Zip
       run: |
         cd ./builder
-        python ./builder.py deepsea output="./deepsea.zip" > output
+        python ./builder.py deepsea output="./deepsea.zip" > ../output
 
     - name: Compile DeepSea-patches Zip
       run: |
         cd ./builder
-        python ./builder.py deepsea-patches output="./deepsea-patched.zip" >> output
+        python ./builder.py deepsea-patches output="./deepsea-patched.zip" >> ../output
     
     - name: Compile DeepSea-minimal Zip
       run: |
         cd ./builder
-        python ./builder.py deepsea-mini output="./deepsea-minimal.zip" >> output
+        python ./builder.py deepsea-mini output="./deepsea-minimal.zip" >> ../output
     
     - name: Bump VERSION
       run: |	
@@ -65,7 +65,7 @@ jobs:
     - uses: pCYSl5EDgo/cat@master
       id: release
       with:
-        path: output
+        path: ./output
     
     - name: Create Release
       id: create_release
