@@ -58,6 +58,10 @@ jobs:
         cd ./builder
         python ./builder.py deepsea-mini output="./deepsea-minimal.zip" >> output
     
+    - name: Bump VERSION
+      run: |	
+       echo ${{ steps.bump_version.outputs.next-version }} > ./VERSION
+    
     - uses: pCYSl5EDgo/cat@master
       id: release
       with:
@@ -112,11 +116,6 @@ jobs:
           asset_path: ./builder/deepsea-minimal.zip
           asset_name: deepsea-minimal_v${{ steps.bump_version.outputs.next-version }}.zip
           asset_content_type: application/zip   
-          
-          
-    - name: Bump VERSION	
-      run: |	
-       echo ${{ steps.bump_version.outputs.next-version }} > ./VERSION
 
 
     - name: Commit files	
