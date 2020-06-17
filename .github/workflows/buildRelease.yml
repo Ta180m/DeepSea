@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - master
-  schedule:
-   - cron:  '0 0 * * 0'
 
 jobs:
   build:
@@ -18,14 +16,7 @@ jobs:
     - name: Increment version
       run: |
         echo ::set-env name=TAG_NAME::$(cat ./VERSION)
-
-    - name: Bump release version	
-      id: bump_version	
-      uses: christian-draeger/increment-semantic-version@1.0.1	
-      with:	
-        current-version: '${{ env.TAG_NAME }}'	
-        version-fragment: 'bug'    
-
+        
     - name: Set up Python 3.8
       uses: actions/setup-python@v1
       with:
@@ -41,31 +32,22 @@ jobs:
         gitToken: ${{ secrets.SLX_GIT_TOKEN }}
         gitUser: ${{ secrets.SLX_GIT_USER }}
       run: | 
-        echo -e "version = 'v${{ steps.bump_version.outputs.next-version }}'\ngithub_username = '$gitUser'\ngithub_password = '$gitPass'\ngitlab_private_access_token = '$gitToken'"> ./builder/config.py
+        echo -e "version = 'v${{ env.TAG_NAME }}'\ngithub_username = '$gitUser'\ngithub_password = '$gitPass'\ngitlab_private_access_token = '$gitToken'"> ./builder/config.py
     
     - name: Compile DeepSea Zip
       run: |
         cd ./builder
-        python ./builder.py deepsea output="./deepsea.zip" > ../output
+        python ./builder.py deepsea.json output="./deepsea.zip"
 
     - name: Compile DeepSea-patches Zip
       run: |
         cd ./builder
-        python ./builder.py deepsea-patches output="./deepsea-patched.zip" >> ../output
+        python ./builder.py deepsea-patches.json output="./deepsea-patched.zip"
     
     - name: Compile DeepSea-minimal Zip
       run: |
         cd ./builder
-        python ./builder.py deepsea-mini output="./deepsea-minimal.zip" >> ../output
-    
-    - name: Bump VERSION
-      run: |	
-       echo ${{ steps.bump_version.outputs.next-version }} > ./VERSION
-    
-    - uses: pCYSl5EDgo/cat@master
-      id: release
-      with:
-        path: ./output
+        python ./builder.py deepsea-minimal.json output="./deepsea-minimal.zip"
     
     - name: Create Release
       id: create_release
@@ -73,11 +55,9 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-          tag_name: ${{ steps.bump_version.outputs.next-version }}
-          release_name: Release ${{ steps.bump_version.outputs.next-version }}
-          body: |
-            ${{ steps.release.outputs.text }}
-          draft: false
+          tag_name: ${{ env.TAG_NAME }}
+          release_name: Release ${{ env.TAG_NAME }}
+          draft: true
           prerelease: false
 
 
@@ -89,7 +69,7 @@ jobs:
       with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
           asset_path: ./builder/deepsea.zip
-          asset_name: deepsea_v${{ steps.bump_version.outputs.next-version }}.zip
+          asset_name: deepsea_v${{ env.TAG_NAME }}.zip
           asset_content_type: application/zip
 
 
@@ -101,7 +81,7 @@ jobs:
       with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
           asset_path: ./builder/deepsea-patched.zip
-          asset_name: deepsea-patched_v${{ steps.bump_version.outputs.next-version }}.zip
+          asset_name: deepsea-patched_v${{ env.TAG_NAME }}.zip
           asset_content_type: application/zip
 
 
@@ -114,16 +94,5 @@ jobs:
       with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
           asset_path: ./builder/deepsea-minimal.zip
-          asset_name: deepsea-minimal_v${{ steps.bump_version.outputs.next-version }}.zip
-          asset_content_type: application/zip   
-
-
-    - name: Commit files	
-      run: |	
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git commit -m "[Auto] bump push after build" -a
-    - name: Push changes
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+          asset_name: deepsea-minimal_v${{ env.TAG_NAME }}.zip
+          asset_content_type: application/zip
